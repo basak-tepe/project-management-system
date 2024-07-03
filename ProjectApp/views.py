@@ -12,6 +12,7 @@ def projectAPI(request, id=0):
         projects = Projects.objects.all()
         projects_serializer = ProjectsSerializer(projects, many=True)
         return JsonResponse(projects_serializer.data, safe=False)
+    
     elif request.method == 'POST':
         project_data = JSONParser().parse(request)
         projects_serializer = ProjectsSerializer(data=project_data)
@@ -19,6 +20,7 @@ def projectAPI(request, id=0):
             projects_serializer.save()
             return JsonResponse('Added Successfully', safe=False)
         return JsonResponse('Failed to Add', safe=False)
+    
     elif request.method == 'PUT':
         try:
             project = get_object_or_404(Projects, pk=id)
@@ -41,23 +43,30 @@ def repositoryAPI(request, id=0):
         repositories = Repository.objects.all()
         repositories_serializer = RepositorySerializer(repositories, many=True)
         return JsonResponse(repositories_serializer.data, safe=False)
+    
     elif request.method == 'POST':
         repository_data = JSONParser().parse(request)
         repositories_serializer = RepositorySerializer(data=repository_data)
         if repositories_serializer.is_valid():
             repositories_serializer.save()
             return JsonResponse('Added Successfully', safe=False)
-        return JsonResponse('Failed to Add', safe=False)
+        return JsonResponse(repositories_serializer.errors, status=400)
+
+    
     elif request.method == 'PUT':
-        repository_data = JSONParser().parse(request)
-        repository = Repository.objects.get(repositoryID=repository_data['repositoryID'])
-        repositories_serializer = RepositorySerializer(repository, data=repository_data)
-        if repositories_serializer.is_valid():
-            repositories_serializer.save()
-            return JsonResponse('Updated Successfully', safe=False)
-        return JsonResponse('Failed to Update', safe=False)
+        try:
+            repository = get_object_or_404(Repository, pk=id)
+            repository_data = JSONParser().parse(request)
+            repositories_serializer = RepositorySerializer(repository, data=repository_data)
+            if repositories_serializer.is_valid():
+                repositories_serializer.save()
+                return JsonResponse({'message': 'Updated Successfully'}, status=200)
+            return JsonResponse(repositories_serializer.errors, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
     elif request.method == 'DELETE':
-        repository = Repository.objects.get(repositoryID=id)
+        repository = get_object_or_404(Repository, pk=id)
         repository.delete()
         return JsonResponse('Deleted Successfully', safe=False)
 
@@ -67,22 +76,29 @@ def trackerAPI(request, id=0):
         trackers = Tracker.objects.all()
         trackers_serializer = TrackerSerializer(trackers, many=True)
         return JsonResponse(trackers_serializer.data, safe=False)
+    
     elif request.method == 'POST':
         tracker_data = JSONParser().parse(request)
         trackers_serializer = TrackerSerializer(data=tracker_data)
         if trackers_serializer.is_valid():
             trackers_serializer.save()
             return JsonResponse('Added Successfully', safe=False)
-        return JsonResponse('Failed to Add', safe=False)
+        return JsonResponse(trackers_serializer.errors, status=400)
+    
     elif request.method == 'PUT':
-        tracker_data = JSONParser().parse(request)
-        tracker = Tracker.objects.get(trackerID=tracker_data['trackerID'])
-        trackers_serializer = TrackerSerializer(tracker, data=tracker_data)
-        if trackers_serializer.is_valid():
-            trackers_serializer.save()
-            return JsonResponse('Updated Successfully', safe=False)
-        return JsonResponse('Failed to Update', safe=False)
+        try:
+            tracker = get_object_or_404(Tracker, pk=id)
+            tracker_data = JSONParser().parse(request)
+            trackers_serializer = TrackerSerializer(tracker, data=tracker_data)
+            if trackers_serializer.is_valid():
+                trackers_serializer.save()
+                return JsonResponse({'message': 'Updated Successfully'}, status=200)
+            return JsonResponse(trackers_serializer.errors, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
     elif request.method == 'DELETE':
-        tracker = Tracker.objects.get(trackerID=id)
+        tracker = get_object_or_404(Tracker, pk=id)
         tracker.delete()
         return JsonResponse('Deleted Successfully', safe=False)
+
