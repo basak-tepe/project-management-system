@@ -4,6 +4,7 @@ from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 from ProjectApp.models import Projects, Repository, Tracker
 from ProjectApp.serializers import ProjectsSerializer, RepositorySerializer, TrackerSerializer
+from django.shortcuts import get_object_or_404
 
 @csrf_exempt
 def projectAPI(request, id=0):
@@ -19,15 +20,18 @@ def projectAPI(request, id=0):
             return JsonResponse('Added Successfully', safe=False)
         return JsonResponse('Failed to Add', safe=False)
     elif request.method == 'PUT':
-        project_data = JSONParser().parse(request)
-        project = Projects.objects.get(projectID=project_data['projectID'])
-        projects_serializer = ProjectsSerializer(project, data=project_data)
-        if projects_serializer.is_valid():
-            projects_serializer.save()
-            return JsonResponse('Updated Successfully', safe=False)
-        return JsonResponse('Failed to Update', safe=False)
+        try:
+            project = get_object_or_404(Projects, pk=id)
+            project_data = JSONParser().parse(request)
+            projects_serializer = ProjectsSerializer(project, data=project_data)
+            if projects_serializer.is_valid():
+                projects_serializer.save()
+                return JsonResponse({'message': 'Updated Successfully'}, status=200)
+            return JsonResponse(projects_serializer.errors, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
     elif request.method == 'DELETE':
-        project = Projects.objects.get(projectID=id)
+        project = get_object_or_404(Projects, pk=id)
         project.delete()
         return JsonResponse('Deleted Successfully', safe=False)
 
