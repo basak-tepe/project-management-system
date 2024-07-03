@@ -47,5 +47,5 @@ This repository contains the backend for the Project Management System, made wit
 
 6. **Set up the Front-End**
    
-  Follow the instructions [here] (https://github.com/basak-tepe/project-management-ui/blob/main/README.md)
+  Follow the instructions [here](https://github.com/basak-tepe/project-management-ui/blob/main/README.md)
    
