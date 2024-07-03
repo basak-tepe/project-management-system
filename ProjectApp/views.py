@@ -6,7 +6,6 @@ from ProjectApp.models import Projects, Repository, Tracker
 from ProjectApp.serializers import ProjectsSerializer, RepositorySerializer, TrackerSerializer
 
 @csrf_exempt
-
 def projectAPI(request, id=0):
     if request.method == 'GET':
         projects = Projects.objects.all()
@@ -31,7 +30,8 @@ def projectAPI(request, id=0):
         project = Projects.objects.get(projectID=id)
         project.delete()
         return JsonResponse('Deleted Successfully', safe=False)
-    
+
+@csrf_exempt
 def repositoryAPI(request, id=0):
     if request.method == 'GET':
         repositories = Repository.objects.all()
@@ -56,7 +56,8 @@ def repositoryAPI(request, id=0):
         repository = Repository.objects.get(repositoryID=id)
         repository.delete()
         return JsonResponse('Deleted Successfully', safe=False)
-    
+
+@csrf_exempt
 def trackerAPI(request, id=0):
     if request.method == 'GET':
         trackers = Tracker.objects.all()
