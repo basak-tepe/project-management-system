@@ -1,11 +1,11 @@
-from django.urls import path, re_path
-from ProjectApp import views
+from django.urls import path
+from ProjectApp.views import projectAPI, repositoryAPI, trackerAPI
 
 urlpatterns = [
-    re_path(r'^project/$', views.projectAPI),
-    re_path(r'^project/([0-9]+)/$', views.projectAPI),
-    re_path(r'^repository/$', views.repositoryAPI),
-    re_path(r'^repository/([0-9]+)/$', views.repositoryAPI),
-    re_path(r'^tracker/$', views.trackerAPI),
-    re_path(r'^tracker/([0-9]+)/$', views.trackerAPI),
+    path('project/', projectAPI.as_view(), name='project_list_create'),
+    path('project/<int:id>/', projectAPI.as_view(), name='project_detail_update_delete'),
+    path('repository/', repositoryAPI.as_view(), name='repository_list_create'),
+    path('repository/<int:id>/', repositoryAPI.as_view(), name='repository_detail_update_delete'),
+    path('tracker/', trackerAPI.as_view(), name='tracker_list_create'),
+    path('tracker/<int:id>/', trackerAPI.as_view(), name='tracker_detail_update_delete'),
 ]
